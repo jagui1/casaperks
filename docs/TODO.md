@@ -261,7 +261,7 @@
 
 ---
 
-- [ ] **4.1 — Dashboard page: live profile and recent transactions**
+- [x] **4.1 — Dashboard page: live profile and recent transactions**
 
   Wire `DashboardPage.jsx` to `GET /api/me` and `GET /api/transactions`. Display the resident's name, unit, points balance badge, and last 5 transactions.
 
@@ -276,7 +276,7 @@
 
 ---
 
-- [ ] **4.2 — Transaction history page: paginated list**
+- [x] **4.2 — Transaction history page: paginated list**
 
   Wire `TransactionsPage.jsx` to `GET /api/transactions` with pagination controls.
 
@@ -291,7 +291,7 @@
 
 ---
 
-- [ ] **4.3 — Gift card catalog page: display cards with affordability state**
+- [x] **4.3 — Gift card catalog page: display cards with affordability state**
 
   Wire `RewardsPage.jsx` to `GET /api/gift-cards` and `GET /api/me`. Render each gift card using `GiftCardCard.jsx` with a "Redeem" button.
 
@@ -306,7 +306,7 @@
 
 ---
 
-- [ ] **4.4 — Redemption confirmation modal**
+- [x] **4.4 — Redemption confirmation modal**
 
   Build `ConfirmModal.jsx`. When a resident clicks an enabled "Redeem" button, display the confirmation modal before any API call is made.
 
@@ -320,7 +320,7 @@
 
 ---
 
-- [ ] **4.5 — `POST /api/redemptions` — Server-side redemption logic**
+- [x] **4.5 — `POST /api/redemptions` — Server-side redemption logic**
 
   Create `server/src/routes/redemptions.js` and `server/src/schemas/redemptionSchemas.js`. Implement the full redemption business logic.
 
@@ -336,7 +336,7 @@
 
 ---
 
-- [ ] **4.6 — Wire redemption result back to the UI**
+- [x] **4.6 — Wire redemption result back to the UI**
 
   After a successful `POST /api/redemptions`, update the client state so the new balance and new transaction are immediately reflected without a full page reload.
 
@@ -350,7 +350,7 @@
 
 ---
 
-- [ ] **4.7 — `PointsBadge` component and consistent balance display**
+- [x] **4.7 — `PointsBadge` component and consistent balance display**
 
   Ensure the points balance displayed in `Layout.jsx` (sidebar), `DashboardPage`, and `RewardsPage` all use a shared `PointsBadge` component and stay in sync after a redemption.
 

@@ -1,8 +1,9 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import PointsBadge from './PointsBadge';
 
 function Layout() {
-  const { user, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
 
   return (
     <div className="min-h-screen flex bg-slate-950 text-slate-50">
@@ -10,6 +11,11 @@ function Layout() {
         <div>
           <div className="text-2xl font-semibold tracking-tight">CasaPerks</div>
           <div className="text-sm text-slate-400">Resident Rewards Portal</div>
+          {profile != null && (
+            <div className="mt-2">
+              <PointsBadge points={profile.pointsBalance} className="text-sm font-medium text-amber-400" />
+            </div>
+          )}
         </div>
         <nav className="flex flex-col gap-2 text-sm">
           {user?.role === 'admin' ? (

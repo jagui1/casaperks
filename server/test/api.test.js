@@ -199,3 +199,101 @@ describe('Auth middleware and login', () => {
     assert.strictEqual(res.status, 401);
   });
 });
+
+const { giftCards } = require('../src/data/mockData');
+const starbucksGiftCardId = giftCards.find((g) => g.brand === 'Starbucks').id;
+const visaGiftCardId = giftCards.find((g) => g.brand === 'Visa').id;
+
+describe('POST /api/redemptions', () => {
+  it('returns 401 when no token', async () => {
+    const res = await request(app)
+      .post('/api/redemptions')
+      .send({ giftCardId: starbucksGiftCardId });
+    assert.strictEqual(res.status, 401);
+  });
+
+  it('returns 400 for empty body', async () => {
+    const res = await request(app)
+      .post('/api/redemptions')
+      .set('Authorization', `Bearer ${residentToken}`)
+      .send({});
+    assert.strictEqual(res.status, 400);
+    assert.ok(Array.isArray(res.body.errors));
+    assert.ok(res.body.errors.length >= 1);
+  });
+
+  it('returns 400 for invalid giftCardId (non-UUID)', async () => {
+    const res = await request(app)
+      .post('/api/redemptions')
+      .set('Authorization', `Bearer ${residentToken}`)
+      .send({ giftCardId: 'not-a-uuid' });
+    assert.strictEqual(res.status, 400);
+    assert.ok(Array.isArray(res.body.errors));
+  });
+
+  it('returns 404 when gift card does not exist', async () => {
+    const res = await request(app)
+      .post('/api/redemptions')
+      .set('Authorization', `Bearer ${residentToken}`)
+      .send({ giftCardId: '00000000-0000-0000-0000-000000000000' });
+    assert.strictEqual(res.status, 404);
+    assert.ok(res.body.message);
+  });
+
+  it('returns 422 when insufficient balance', async () => {
+    const jeremyToken = makeTokenForResident('jeremy.aguillon');
+    const res = await request(app)
+      .post('/api/redemptions')
+      .set('Authorization', `Bearer ${jeremyToken}`)
+      .send({ giftCardId: visaGiftCardId });
+    assert.strictEqual(res.status, 422);
+    assert.strictEqual(res.body.message, 'Insufficient points');
+    assert.strictEqual(typeof res.body.pointsBalance, 'number');
+    assert.strictEqual(res.body.required, 1000);
+  });
+
+  it('returns 200 and updated pointsBalance when balance is sufficient', async () => {
+    const meBefore = await request(app)
+      .get('/api/me')
+      .set('Authorization', `Bearer ${residentToken}`);
+    assert.strictEqual(meBefore.status, 200);
+    const balanceBefore = meBefore.body.pointsBalance;
+
+    const res = await request(app)
+      .post('/api/redemptions')
+      .set('Authorization', `Bearer ${residentToken}`)
+      .send({ giftCardId: starbucksGiftCardId });
+
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(typeof res.body.pointsBalance, 'number');
+    assert.strictEqual(res.body.pointsBalance, balanceBefore - 200);
+  });
+
+  it('adds a redemption transaction for the resident', async () => {
+    const txBefore = await request(app)
+      .get('/api/transactions')
+      .set('Authorization', `Bearer ${residentToken}`)
+      .query({ page: 1, limit: 1 });
+    assert.strictEqual(txBefore.status, 200);
+    const idsBefore = new Set(txBefore.body.data.map((t) => t.id));
+
+    const res = await request(app)
+      .post('/api/redemptions')
+      .set('Authorization', `Bearer ${residentToken}`)
+      .send({ giftCardId: starbucksGiftCardId });
+    assert.strictEqual(res.status, 200);
+
+    const txAfter = await request(app)
+      .get('/api/transactions')
+      .set('Authorization', `Bearer ${residentToken}`)
+      .query({ page: 1, limit: 5 });
+    assert.strictEqual(txAfter.status, 200);
+    const newest = txAfter.body.data[0];
+    assert.ok(newest);
+    assert.strictEqual(newest.type, 'redemption');
+    assert.ok(newest.description.includes('Starbucks'));
+    assert.ok(newest.description.includes('Gift Card'));
+    assert.strictEqual(newest.points, -200);
+    assert.ok(!idsBefore.has(newest.id), 'new transaction id');
+  });
+});
