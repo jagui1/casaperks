@@ -31,7 +31,7 @@ This specification describes a small, self-contained web application that demons
 
 ---
 
-## 2. Goals & Non-Goals
+## 2. Goals
 
 ### Goals
 
@@ -41,7 +41,7 @@ This specification describes a small, self-contained web application that demons
 - Keep the security model lightweight but meaningful via input validation (Zod)
 - Run the full stack with a single command (`npm start` from the monorepo root)
 
-### Non-Goals
+### Future Enhancements
 
 - No real database — all data lives in server memory and resets on restart
 - No gift card code generation — redemption only deducts points and records the transaction
@@ -57,16 +57,6 @@ This specification describes a small, self-contained web application that demons
 |-----------|-----------------------------------------------------------------------------|
 | `resident` | A property tenant. Can view their own dashboard, transaction history, and redeem points. Cannot access other residents' data. |
 | `admin`    | A property manager. Authenticated the same way as a resident. Reserved for future use — no special UI in v1. |
-
-### Mock Users (seed data)
-
-| Username         | Password      | Role      | Starting Points |
-|------------------|---------------|-----------|-----------------|
-| `nate.craddock`  | `resident16`  | resident  | 1,450           |
-| `jeremy.aguillon`| `resident17`  | resident  | 320             |
-| `admin`          | `admin@casa1` | admin     | N/A             |
-
-> Passwords are stored as bcrypt hashes in the mock data file — never as plaintext.
 
 ---
 
@@ -423,38 +413,6 @@ casaperks/
 
 ---
 
-## 11. Running the Application
-
-### Prerequisites
-
-- Node.js >= 18
-- npm >= 9
-
-### Setup
-
-```bash
-# 1. Clone the repo and install all dependencies
-git clone <repo-url> casaperks
-cd casaperks
-npm install              # installs root + workspaces (client + server)
-
-# 2. Create the environment file
-echo "JWT_SECRET=replace_this_with_a_long_random_secret" > .env
-
-# 3. Start both client and server
-npm start
-```
-
-The root `package.json` `start` script uses `concurrently`:
-
-```json
-{
-  "scripts": {
-    "start": "concurrently \"npm run dev --workspace=server\" \"npm run dev --workspace=client\""
-  }
-}
-```
-
 | Service  | URL                      |
 |----------|--------------------------|
 | Frontend | http://localhost:5173    |
@@ -470,7 +428,7 @@ The root `package.json` `start` script uses `concurrently`:
 
 ---
 
-## 12. Future Enhancements / Out of Scope
+## 11. Future Enhancements / Out of Scope
 
 The following items are explicitly out of scope for v1 but are noted here as natural next steps:
 

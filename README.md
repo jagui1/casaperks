@@ -4,13 +4,10 @@ A points-based resident rewards dashboard for property management. Residents can
 
 ## Current state
 
-- **Phase 1 (done):** Monorepo scaffold, Express server, React + Vite + Tailwind client, single `npm start`, mock data, and a static app shell with sidebar layout and stub pages (Login, Dashboard, History, Rewards).
-- **Phase 2 (done):** Backend API returning mock data — no auth yet. Implemented:
-  - `GET /health` — server health check
-  - `GET /api/gift-cards` — full gift card catalog
-  - `GET /api/me` — resident profile (hard-coded to first resident)
-  - `GET /api/transactions` — paginated transaction history for that resident, with Zod-validated query params (`page`, `limit`)
-- **Not yet:** Phase 3 (JWT login, protected routes), Phase 4 (live dashboard/transactions/rewards UI, redemption flow).
+- **Phase 1 (done):** Monorepo scaffold, Express server, React + Vite + Tailwind client, single `npm start`, mock data, and app shell with sidebar layout and pages (Login, Dashboard, History, Rewards, Admin placeholder).
+- **Phase 2 (done):** Backend API with mock data: `GET /health`, `GET /api/gift-cards`, `GET /api/me`, `GET /api/transactions` (paginated, Zod-validated query params).
+- **Phase 3 (done):** JWT authentication: `POST /api/auth/login`, auth middleware protecting all non-login API routes, `/api/me` and `/api/transactions` scoped to the authenticated user, login UI with AuthContext and Axios client, logout, and admin stub (admin users see “Admin portal coming soon” and do not see resident dashboard/history/rewards).
+- **Not yet:** Phase 4 (live dashboard/transactions/rewards UI with real data, redemption flow and `POST /api/redemptions`).
 
 ## Prerequisites
 
@@ -25,7 +22,7 @@ cd casaperks
 npm install
 ```
 
-Create a `.env` file at the repo root (used in Phase 3 for JWT):
+Create a `.env` file at the repo root (required for JWT signing):
 
 ```bash
 echo "JWT_SECRET=replace_with_a_long_random_secret" > .env
@@ -51,18 +48,34 @@ npm run dev --workspace=server   # port 3001
 npm run dev --workspace=client   # port 5173
 ```
 
-## API (no auth in current build)
+## Login
 
-| Method | Route | Description |
-|--------|--------|-------------|
-| GET | `/health` | `{ "status": "ok" }` |
-| GET | `/api/gift-cards` | Gift card catalog (array of `{ id, brand, pointCost }`) |
-| GET | `/api/me` | Resident profile (hard-coded user; no `passwordHash` in response) |
-| GET | `/api/transactions?page=1&limit=10` | Paginated transactions; `page` ≥ 1, `limit` 1–50 |
+Use these mock accounts (username / password):
+
+| Username           | Password      | Role     |
+|--------------------|---------------|----------|
+| `nate.craddock`    | `resident16`  | resident |
+| `jeremy.aguillon`  | `resident17`  | resident |
+| `admin`            | `admin@casa1` | admin    |
+
+Residents see Dashboard, History, and Rewards. Admins see the “Admin portal coming soon” placeholder. Unauthenticated users are redirected to the login page.
+
+## API
+
+| Method | Route | Auth | Description |
+|--------|--------|------|-------------|
+| GET | `/health` | No | `{ "status": "ok" }` |
+| POST | `/api/auth/login` | No | Body: `{ username, password }`. Returns `{ token }` or 401. |
+| GET | `/api/gift-cards` | Yes | Gift card catalog (array of `{ id, brand, pointCost }`) |
+| GET | `/api/me` | Yes | Profile for the authenticated user (no `passwordHash`) |
+| GET | `/api/transactions?page=1&limit=10` | Yes | Paginated transactions for the authenticated user; `page` ≥ 1, `limit` 1–50 |
+| POST | `/api/redemptions` | Yes | Stub (501); full redemption logic in Phase 4 |
+
+Protected routes require header: `Authorization: Bearer <token>`.
 
 ## Tests
 
-Server tests lock in API contracts and validation so later phases (auth, redemption) don’t break existing behavior.
+Server tests cover API contracts, mock data shape, validation middleware, and authentication (login, JWT middleware, protected routes, user scoping).
 
 From the repo root:
 
@@ -76,34 +89,35 @@ From the server package:
 cd server && npm test
 ```
 
-Tests live in `server/test/`: API contract tests, mock data shape tests, and validation middleware tests.
+Tests live in `server/test/`: `api.test.js`, `auth.test.js`, `mockData.test.js`, `validate.test.js`.
 
 ## Project layout
 
 ```
 casaperks/
 ├── package.json          # Workspaces, npm start, npm test
-├── .env                  # JWT_SECRET (Phase 3)
+├── .env                  # JWT_SECRET (required for auth)
 ├── client/               # React + Vite + Tailwind
-│   ├── src/
-│   │   ├── App.jsx       # Routes
-│   │   ├── components/   # Layout, etc.
-│   │   └── pages/        # Login, Dashboard, Transactions, Rewards (stubs)
-│   └── ...
+│   └── src/
+│       ├── App.jsx       # Routes, RequireAuth
+│       ├── api/          # client.js (Axios + auth header)
+│       ├── context/      # AuthContext.jsx
+│       ├── components/   # Layout (sidebar, logout)
+│       └── pages/        # Login, Dashboard, Transactions, Rewards, Admin
 ├── server/               # Express API
 │   ├── src/
-│   │   ├── app.js        # Express app factory (used by index + tests)
-│   │   ├── index.js     # Start server
-│   │   ├── data/        # mockData.js (residents, transactions, giftCards)
-│   │   ├── middleware/  # validate.js (Zod)
-│   │   ├── routes/      # giftCards, me, transactions
-│   │   └── schemas/     # transactionSchemas.js
-│   └── test/            # API, mockData, validate tests
+│   │   ├── app.js        # Express app factory
+│   │   ├── index.js      # Start server (loads .env)
+│   │   ├── data/         # mockData.js
+│   │   ├── middleware/   # authMiddleware.js, validate.js
+│   │   ├── routes/       # auth, giftCards, me, transactions, redemptions (stub)
+│   │   └── schemas/      # authSchemas.js, transactionSchemas.js
+│   └── test/             # api, auth, mockData, validate
 └── docs/
     ├── specification.md
-    └── TODO.md          # Phase checklist
+    └── TODO.md           # Phase checklist
 ```
 
 ## Roadmap
 
-See [docs/TODO.md](docs/TODO.md) for the full phase list. Next up: **Phase 3** (JWT login, auth middleware, protected routes, login UI, logout, admin stub), then **Phase 4** (live dashboard/transactions/rewards pages and redemption flow).
+See [docs/TODO.md](docs/TODO.md) for the full phase list. Next up: **Phase 4** (live dashboard/transactions/rewards pages, redemption confirmation modal, `POST /api/redemptions` implementation, and wiring redemption result back to the UI).

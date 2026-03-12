@@ -153,7 +153,7 @@
 
 ---
 
-- [ ] **3.1 — `POST /api/auth/login` — Issue JWT**
+- [x] **3.1 — `POST /api/auth/login` — Issue JWT**
 
   Install `jsonwebtoken` and `bcryptjs`. Create `server/src/routes/auth.js`. Validate credentials against mock data, compare password with bcrypt, and return a signed JWT on success.
 
@@ -168,7 +168,7 @@
 
 ---
 
-- [ ] **3.2 — Apply Zod validation to `POST /api/auth/login`**
+- [x] **3.2 — Apply Zod validation to `POST /api/auth/login`**
 
   Create `server/src/schemas/authSchemas.js` with a Zod schema for `{ username, password }`. Apply the `validate` middleware to the login route.
 
@@ -180,7 +180,7 @@
 
 ---
 
-- [ ] **3.3 — Build JWT auth middleware**
+- [x] **3.3 — Build JWT auth middleware**
 
   Create `server/src/middleware/authMiddleware.js`. Verify the `Authorization: Bearer <token>` header on incoming requests. Attach decoded payload to `req.user` on success.
 
@@ -193,7 +193,7 @@
 
 ---
 
-- [ ] **3.4 — Protect all non-login API routes**
+- [x] **3.4 — Protect all non-login API routes**
 
   Apply `authMiddleware` to `GET /api/me`, `GET /api/transactions`, `GET /api/gift-cards`, and `POST /api/redemptions` (stub).
 
@@ -205,7 +205,7 @@
 
 ---
 
-- [ ] **3.5 — Scope `GET /api/me` and `GET /api/transactions` to the authenticated user**
+- [x] **3.5 — Scope `GET /api/me` and `GET /api/transactions` to the authenticated user**
 
   Replace the hard-coded `jane.doe` references in both routes with a lookup using `req.user.userId` from the JWT payload.
 
@@ -218,7 +218,7 @@
 
 ---
 
-- [ ] **3.6 — Implement login UI and AuthContext on the client**
+- [x] **3.6 — Implement login UI and AuthContext on the client**
 
   Build the `LoginPage.jsx` form. Create `AuthContext.jsx` to store the JWT in React state. Create `api/client.js` (Axios instance) that injects the `Authorization` header on every request automatically.
 
@@ -232,7 +232,7 @@
 
 ---
 
-- [ ] **3.7 — Implement logout**
+- [x] **3.7 — Implement logout**
 
   Add a "Log Out" button to the sidebar in `Layout.jsx` that clears the auth state and redirects to the login page.
 
@@ -244,7 +244,7 @@
 
 ---
 
-- [ ] **3.8 — Admin stub: post-login placeholder**
+- [x] **3.8 — Admin stub: post-login placeholder**
 
   After a successful login, detect `role === "admin"` in the JWT payload and render an "Admin portal coming soon" placeholder page instead of the resident dashboard.
 

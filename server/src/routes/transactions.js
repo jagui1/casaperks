@@ -5,14 +5,16 @@ const { transactionQuerySchema } = require('../schemas/transactionSchemas');
 
 const router = express.Router();
 
-// Hard-coded to first resident (auth-based lookup in Phase 3)
-const HARDCODED_USERNAME = 'nate.craddock';
-
 router.get('/', validate(transactionQuerySchema, 'query'), (req, res) => {
-  const user = residents.find((r) => r.username === HARDCODED_USERNAME);
+  if (!req.user || !req.user.userId) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  const user = residents.find((r) => r.id === req.user.userId);
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
   }
+
   const { page = 1, limit = 10 } = req.validatedQuery || req.query;
   const pageNum = Number(page);
   const limitNum = Number(limit);

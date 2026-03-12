@@ -3,7 +3,7 @@ const residents = [
     id: '11111111-1111-1111-1111-111111111111',
     username: 'nate.craddock',
     passwordHash:
-      '$2b$10$ZbVla9dWxH1F2jM1AxUU4OZGMh51.zU.wP0eG0uDN1t5J5Pz4638K', // bcrypt hash of 'resident123'
+      '$2b$10$ZbVla9dWxH1F2jM1AxUU4OZGMh51.zU.wP0eG0uDN1t5J5Pz4638K', // bcrypt hash of 'resident16'
     role: 'resident',
     fullName: 'Nate Craddock',
     unit: '4B',
@@ -13,7 +13,7 @@ const residents = [
     id: '22222222-2222-2222-2222-222222222222',
     username: 'jeremy.aguillon',
     passwordHash:
-      '$2b$10$9hM3EJX7QyH8XJ5hZ3MZJOU3bO2iTzA8E5/1h6fLpI7F8aM4R2C9K', // bcrypt hash of 'resident456'
+      '$2b$10$9hM3EJX7QyH8XJ5hZ3MZJOU3bO2iTzA8E5/1h6fLpI7F8aM4R2C9K', // bcrypt hash of 'resident17'
     role: 'resident',
     fullName: 'Jeremy Aguillon',
     unit: '17A',
@@ -23,7 +23,7 @@ const residents = [
     id: '33333333-3333-3333-3333-333333333333',
     username: 'admin',
     passwordHash:
-      '$2b$10$7tQ9uF3sP8eN1kL4cV2B4O7yX9rL3aD5qW1jE6uH8cK2mN4pS7dG2', // bcrypt hash of 'admin@casa1'
+      '$2b$10$ynWKVyyvgLkVDjxZZgdX8uE5d9smpUALHG8APt9Pd6R6n/BYQOjBW', // bcrypt hash of 'admin@casa1'
     role: 'admin',
     fullName: 'CasaPerks Admin',
     unit: null,
