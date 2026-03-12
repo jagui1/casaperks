@@ -86,7 +86,7 @@
 
 ---
 
-- [ ] **2.1 — `GET /api/gift-cards` — Gift card catalog**
+- [x] **2.1 — `GET /api/gift-cards` — Gift card catalog**
 
   Create `server/src/routes/giftCards.js` and register it on the Express app. Return the full gift card catalog from mock data.
 
@@ -98,7 +98,7 @@
 
 ---
 
-- [ ] **2.2 — `GET /api/me` — Resident profile**
+- [x] **2.2 — `GET /api/me` — Resident profile**
 
   Create `server/src/routes/me.js`. For now, hard-code it to return `jane.doe`'s profile (auth-based lookup added in Phase 3).
 
@@ -109,7 +109,7 @@
 
 ---
 
-- [ ] **2.3 — `GET /api/transactions` — Transaction history with pagination**
+- [x] **2.3 — `GET /api/transactions` — Transaction history with pagination**
 
   Create `server/src/routes/transactions.js`. Return transactions filtered to `jane.doe` (hard-coded for now) and support `?page=` and `?limit=` query parameters.
 
@@ -122,7 +122,7 @@
 
 ---
 
-- [ ] **2.4 — Install Zod and create validation middleware**
+- [x] **2.4 — Install Zod and create validation middleware**
 
   Install Zod. Create `server/src/middleware/validate.js` — a middleware factory that accepts a Zod schema, validates `req.body` or `req.query`, and returns `400` on failure.
 
@@ -135,7 +135,7 @@
 
 ---
 
-- [ ] **2.5 — Apply Zod validation to `GET /api/transactions`**
+- [x] **2.5 — Apply Zod validation to `GET /api/transactions`**
 
   Create `server/src/schemas/transactionSchemas.js` with a Zod schema for the `page` and `limit` query params. Apply the `validate` middleware to the transactions route.
 
